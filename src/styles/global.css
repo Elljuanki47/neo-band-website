@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+@theme {
+    --font-display: "Bebas Neue", sans-serif;
+
+    --color-brand-black: #000000;
+    --color-brand-white: #ffffff;
+    --color-brand-red: #e10600;
+}
