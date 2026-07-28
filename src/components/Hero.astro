@@ -1,18 +1,32 @@
 ---
-import { bandConfig } from '../config/band.config.js';
+import { bandConfig } from '../config/band.config';
 ---
 
 
 
 <section
-    class="min-h-screen bg-black text-white flex flex-col items-center justify-center"
+    class="min-h-screen bg-black text-white flex flex-col items-center justify-center text-center px-6"
 >
-    <h1 class="text-6xl md:text-8x1 font-bold text-red-600">
+    <img 
+        src={bandConfig.logo}
+        alt={`logo de ${bandConfig.name}`}
+        class="w-48 mb-8"
+    />  
+
+    <h1 class="text-7xl font-bold tracking-widest">
         {bandConfig.name}
     </h1>
 
-    <p class="mt-4 text-gray-300 text-lg">
+    <p class="mt-4 text-x1 text-gray-300">
         {bandConfig.tagline}
     </p>
+
+    <a 
+        href={bandConfig.latestRelease.spotifyUrl}
+        target="_blank"
+        class="mt-8 bg-red600 hover:bg-red-700 px-8 py-3 rounded-full font-bold transition"
+    >
+        ▶ AMULETO
+    </a>
 
 </section>
