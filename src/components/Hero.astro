@@ -5,28 +5,76 @@ import { bandConfig } from '../config/band.config';
 
 
 <section
-    class="min-h-screen bg-brand-black text-brand-white flex flex-col items-center justify-center text-center px-6"
+    class="relative min-h-screen bg-brand-black text-brand-white flex flex-col items-center justify-center text-center px-6 overflow-hidden"
 >
+
+    <!-- Imagen de fondo -->
     <img 
+        src={bandConfig.latestRelease.cover}
+        alt=""
+        class="absolute inset-0 w-full h-full object-cover opacity-60"
+    />
+
+    <!-- Overlay oscuro -->
+    <div class="absolute inset-0 bg-brand-black/40"></div>
+
+    <!-- Gradiente inferior -->
+    <div class="absolute bottom-0 left-0 w-full h-40 bg-linear-to-t from-brand-black to-transparent"></div>
+
+
+    <!-- Contenido principal -->
+    <div class="relative z-10 flex flex-col items-center">
+
+        <!-- Logo -->
+        <img 
         src={bandConfig.logo}
         alt={`logo de ${bandConfig.name}`}
-        class="w-52 h-52 rounded-full object-cover mb-8"
-    />  
+        class="w-52 h-52 rounded-full object-cover mb-10 border border-white/10 animate-fade-up"
+        />  
 
-    <h1 class="text-9xl font-bold tracking-widest font-display">
-        {bandConfig.name}
-    </h1>
+        <h1 class="text-9xl font-bold tracking-widest font-display animate-fade-up delay-200">
+            {bandConfig.name}
+        </h1>
 
-    <p class="mt-3 text-sm uppercase tracking-[0.2em] text-gray-500">
-        {bandConfig.tagline}
-    </p>
+        <p class="mt-3 text-sm uppercase tracking-[0.2em] text-gray-500 animate-fade-up delay-400">
+            {bandConfig.tagline}
+        </p>
 
-    <a 
-        href={bandConfig.latestRelease.spotifyUrl}
-        target="_blank"
-        class="mt-8 bg-red600 hover:bg-red-700 px-8 py-3 rounded-full font-bold transition"
-    >
-        ▶ AMULETO
-    </a>
+        <a 
+            href={bandConfig.latestRelease.spotifyUrl}
+            target="_blank"
+            class="
+            mt-14
+            px-8
+            py-3
+            rounded-full
+            font-bold
+            border
+            border-white
+            text-brand-white
+            hover:bg-brand-white
+            hover:text-brand-black
+            hover:scale-105
+            transition-all
+            duration-300"
+        >
+            ▶ AMULETO
+        </a>
+    </div>
 
+
+    <!-- Indicador de scroll -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center text-white/40 animate-scroll">
+
+        <span class="text-xs uppercase tracking-[0.3em] mb-3">
+            Scroll
+        </span>
+
+        <div class="h-10 w-px bg-white/40"></div>
+
+                <span class="mt-2 text-xl">
+            ↓
+        </span>
+
+    </div>
 </section>

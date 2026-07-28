@@ -7,3 +7,46 @@
     --color-brand-white: #ffffff;
     --color-brand-red: #e10600;
 }
+
+@keyframes fase-up {
+    from {
+        opacity: 0<
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-up {
+    animation: fase-up 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.delay-200 {
+    animation-delay: 200ms;
+}
+
+.delay-400 {
+    animation-delay: 400ms;
+}
+
+.delay-600 {
+    animation-delay: 600ms;
+}
+
+@keyframes scroll-bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(8px);
+    }
+}
+
+.animate-scroll {
+    animation: scroll-bounce 1.8s infinite;
+}

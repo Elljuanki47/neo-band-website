@@ -20,7 +20,7 @@ export const bandConfig = {
 
   latestRelease: {
     title: "Amuleto",
-    cover: "/images/releases/amuleto-cover.jpg",
+    cover: "/images/releases/neo-amuleto.png",
     spotifyUrl: "https://open.spotify.com/intl-es/track/36gb8l3yhcFgSHPQZg55Qm?si=297522803d324dd8",
   },
 };
