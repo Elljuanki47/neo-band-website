@@ -18,9 +18,29 @@ export const bandConfig = {
     youtube: "https://youtu.be/Yc30lzQd_B4?si=_2YAy67FbfpQlq5d",
   },
 
+  navigation: [
+    {
+      label: "Inicio",
+      href: "#inicio",
+    },
+    {
+      label: "Musica",
+      href: "#musica",
+    },
+    {
+      label: "Banda",
+      href: "#banda",
+    },
+    {
+      label: "Shows",
+      href: "#shows",
+    },
+  ],
+
   latestRelease: {
     title: "Amuleto",
     cover: "/images/releases/neo-amuleto.png",
     spotifyUrl: "https://open.spotify.com/intl-es/track/36gb8l3yhcFgSHPQZg55Qm?si=297522803d324dd8",
+    spotifyEmbed: "https://open.spotify.com/embed/track/36gb8l3yhcFgSHPQZg55Qm?utm_source=generator&si=f5ae5c9f2f334071"
   },
 };

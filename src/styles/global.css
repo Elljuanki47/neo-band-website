@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-    --font-display: "Bebas Neue", sans-serif;
+    --font-display: "Bebas Neue", Impact, sans-serif;
 
     --color-brand-black: #000000;
     --color-brand-white: #ffffff;
@@ -10,7 +10,7 @@
 
 @keyframes fase-up {
     from {
-        opacity: 0<
+        opacity: 0;
         transform: translateY(20px);
     }
 
