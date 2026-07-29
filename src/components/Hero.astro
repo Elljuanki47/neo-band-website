@@ -11,7 +11,7 @@ import { bandConfig } from '../config/band.config';
 
     <!-- Imagen de fondo -->
     <img 
-        src={bandConfig.latestRelease.cover}
+        src={bandConfig.hero.background}
         alt=""
         class="absolute inset-0 w-full h-full object-cover opacity-60"
     />
@@ -33,17 +33,18 @@ import { bandConfig } from '../config/band.config';
         class="w-52 h-52 rounded-full object-cover mb-10 border border-white/10 animate-fade-up"
         />  
 
-        <h1 class="text-9xl font-bold tracking-widest font-display animate-fade-up delay-200">
+        <h1 class="text-6xl sm:text-7xl md:text-9xl font-bold tracking-widest font-display animate-fade-up delay-200">
             {bandConfig.name}
         </h1>
 
-        <p class="mt-3 text-sm uppercase tracking-[0.2em] text-gray-500 animate-fade-up delay-400">
+        <p class="mt-3 text-sm uppercase tracking-[0.2em] text-gray-400 animate-fade-up delay-400">
             {bandConfig.tagline}
         </p>
 
         <a 
             href={bandConfig.latestRelease.spotifyUrl}
             target="_blank"
+            rel="noopener noreferrer"
             class="
             mt-14
             px-8
@@ -59,7 +60,7 @@ import { bandConfig } from '../config/band.config';
             transition-all
             duration-300"
         >
-            ▶ AMULETO
+            ▶ {bandConfig.latestRelease.title}
         </a>
     </div>
 

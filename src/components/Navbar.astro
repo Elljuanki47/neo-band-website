@@ -1,0 +1,166 @@
+---
+import {bandConfig } from "../config/band.config";
+
+const middleIndex = Math.ceil(bandConfig.navigation.length / 2);
+
+const leftLinks = bandConfig.navigation.slice(0, middleIndex);
+const rightLinks = bandConfig.navigation.slice(middleIndex);   
+---
+
+<header 
+    id="navbar"
+    class="fixed top-0 left-0 z-50 w-full transition-all duration-300"
+>
+    <nav 
+        aria-label="Navegacion principal"
+        class="mx-auto flex max-w-6xl items-center justify-between px-6 py-3"
+    >
+        <div class="hidden md:flex items-center gap-8">
+            {
+                leftLinks.map((link) => (
+                    <a 
+                        href={link.href}
+                        class="text-sm uppercase tracking-[0.2em] text-brand-white/80 transition duration-300 hover:text-brand-white"
+                    >
+                        {link.label}
+                    </a>
+                ))
+            }
+        </div>
+
+        <a 
+            href="#inicio"
+            aria-label={`Ir al inicio de ${bandConfig.name}`}
+        >
+            <img
+                src={bandConfig.logo}
+                alt={`Logo de ${bandConfig.name}`}
+                class="h-16 w-16 rounded-full object-cover border border-white/20 transition duration-300 hover:scale-105"
+            />
+        </a>
+
+        <button
+            id="menu-button"
+            type="button"
+            aria-label="Abrir menu"
+            aria-controls="mobile-menu"
+            aria-expanded="false"
+            class="md:hidden text-brand-white"
+        >
+            <span class="block w-6 h-px bg-current mb-1.5"></span>
+            <span class="block w-6 h-px bg-current mb-1.5"></span>
+            <span class="block w-6 h-px bg-current"></span>
+        </button>
+
+        <div class="hidden md:flex items-center gap-8">
+            {
+                rightLinks.map((link) => (
+                    <a 
+                        href={link.href}
+                        class="text-sm uppercase tracking-[0.2em] text-brand-white/80 transition duration-300 hover:text-brand-white"
+                    >
+                        {link.label}
+                    </a>
+                ))
+            }
+        </div>
+    </nav>
+
+    <div
+        id="mobile-menu"
+        class="absolute top-full left-0 w-full md:hidden border-t border-white/10 bg-brand-black/95 backdrop-blur-md opacity-0 -translate-y-4 pointer-events-none transition-all duration-300 ease-out"
+    >
+        <div class="flex flex-col items-center gap-6 px-6 py-8">
+            {
+                bandConfig.navigation.map((link) => (
+                    <a 
+                        href={link.href}
+                        class="mobile-link text-sm uppercase tracking-[0.2em] text-brand-white/80 transition duration-300 hover:text-brand-white"
+                    >
+                        {link.label}
+                    </a>
+                ))
+            }
+        </div>
+    </div> 
+</header>
+
+<script>
+    const navbar = document.getElementById("navbar");
+    const menuButton = document.getElementById("menu-button");
+    const mobileMenu = document.getElementById("mobile-menu");
+    const mobileLinks = document.querySelectorAll(".mobile-link");
+
+    function updateNavbar() {
+        if (!navbar) return;
+
+        if (window.scrollY > 40) {
+            navbar.classList.add(
+                "bg-brand-black/90",
+                "backdrop-blur-md",
+                "shadow-lg"
+            );
+        } else {
+            navbar.classList.remove(
+                "bg-brand-black/90",
+                "backdrop-blur-md",
+                "shadow-lg"
+            );
+        }
+    }
+
+    function toggleMobileMenu() {
+
+        if (!menuButton || !mobileMenu) return;
+
+        const isOpen = !mobileMenu.classList.contains("opacity-0");
+
+        if (isOpen) {
+            mobileMenu.classList.remove(
+                "opacity-100",
+                "translate-y-0",
+                "pointer-events-auto"
+            );
+
+            mobileMenu.classList.add(
+                "opacity-0",
+                "-translate-y-4",
+                "pointer-events-none"
+            );
+        } else {
+            mobileMenu.classList.remove(
+                "opacity-0",
+                "-translate-y-4",
+                "pointer-events-none"
+            );
+
+            mobileMenu.classList.add(
+                "opacity-100",
+                "translate-y-0",
+                "pointer-events-auto"
+            );
+        }
+
+        menuButton.setAttribute("aria-expanded", String(!isOpen));
+        menuButton.setAttribute(
+            "aria-label",
+            isOpen ? "Abrir menu" : "Cerrar menu"
+        );
+    }
+
+    menuButton?.addEventListener("click", toggleMobileMenu);
+
+    mobileLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+            if (!mobileMenu || !menuButton) return;
+
+            mobileMenu.classList.add("opacity-0");
+            menuButton.setAttribute("aria-expanded", "false");
+            menuButton.setAttribute("aria-label", "Abrir menu");
+        });
+    });
+
+    updateNavbar();
+
+    window.addEventListener("scroll", updateNavbar, { passive: true });
+</script>

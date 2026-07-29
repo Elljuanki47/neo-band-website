@@ -32,10 +32,22 @@ export const bandConfig = {
       href: "#banda",
     },
     {
+      label: "Redes",
+      href: "#redes",
+    },
+    {
       label: "Shows",
       href: "#shows",
     },
+    {
+      label: "Contacto",
+      href: "#contacto",
+    }
   ],
+
+  hero: {
+    background: "/images/releases/neo-amuleto.png",
+  },
 
   latestRelease: {
     title: "Amuleto",

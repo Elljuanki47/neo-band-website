@@ -9,31 +9,32 @@ import { bandConfig } from "../config/band.config";
         <img 
             src={bandConfig.latestRelease.cover}
             alt={`Portada de ${bandConfig.latestRelease.title}`}
-            class="w-80 h-80 object-cover rounded-lg shadow-2xl border border-white/10"
+            class="w-full max-w-80 aspect-square object-cover rounded-lg shadow-2xl border border-white/10"
         />
 
         <div class="flex flex-col justify-center items-center md:items-start text-center md:text-left">
 
-            <p class="text-sm uppercase tracking-[0.3em] text-gray-500">
+            <p class="text-sm uppercase tracking-[0.3em] text-gray-400">
                 Ultimo lanzamiento
             </p>
 
-            <h2 class="mt-2 text-8xl font-display tracking-widest">
+            <h2 class="mt-2 text-5xl sm:text-6xl md:text-8xl font-display tracking-widest">
                 {bandConfig.latestRelease.title}
             </h2>
 
-            <p class="mt-10 text-xs uppercase tracking-[0.3em] text-gray-500">
+            <p class="mt-10 text-xs uppercase tracking-[0.3em] text-gray-400">
                 Escuchar ahora
             </p>
 
             <iframe
                 src={bandConfig.latestRelease.spotifyEmbed}
+                title ={`Reproductor de Spotify - ${bandConfig.latestRelease.title}`}
                 width="100%"
                 height="152"
                 frameborder="0"
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy"
-                class="mt-5 w-80 rounded-xl transition hover:scale-[1.02]"
+                class="mt-5 w-full max-w-80 rounded-xl transition hover:scale-[1.02]"
             />
 
         </div>
