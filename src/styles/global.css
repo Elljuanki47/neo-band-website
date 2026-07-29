@@ -69,3 +69,25 @@ html {
 section {
     scroll-margin-top: 6rem;
 }
+
+/* ====================
+    Hero SlideShow
+======================*/
+
+@keyframes heroKenBurns {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.08);
+    }
+}
+
+.hero-slide-image {
+    transform: scale(1);
+}
+
+.hero-slide-image.is-active {
+    animation: heroKenBurns 6s linear forwards;
+}

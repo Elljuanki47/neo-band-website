@@ -1,0 +1,102 @@
+---
+import { bandConfig } from "../config/band.config";
+---
+
+<div class="absolute inset-0 w-full h-full">
+    {
+    bandConfig.hero.images.map((image, index) => (
+        <img
+            src={image.src}
+            alt=""
+            style={`object-position: ${image.position};`}
+            class={`hero-slide hero-slide-image absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                index === 0
+                    ? "opacity-100 is-active"
+                    : "opacity-0"
+            }`}
+        />
+        
+        ))
+    }
+</div>
+
+<script>
+
+    //==================================
+    // Constantes
+    //==================================
+
+    const SLIDESHOW_INTERVAL = 5000;
+    const FADE_DURATION = 1000;
+
+    const OPACITY_VISIBLE = "opacity-100";
+    const OPACITY_HIDDEN = "opacity-0";
+
+    const ACTIVE_SLIDE = "is-active";
+
+    //==================================
+    // Variables
+    //==================================
+
+    const slides = document.querySelectorAll<HTMLImageElement>(".hero-slide");
+
+    let currentSlide = 0;
+    let slideshowInterval: number | undefined;
+
+    //==================================
+    // Funciones
+    //==================================
+
+    function showSlide(slide: Element) {
+        slide.classList.remove(OPACITY_HIDDEN);
+        slide.classList.add(OPACITY_VISIBLE);
+        slide.classList.add(ACTIVE_SLIDE);
+    }
+
+    function hideSlide(slide: Element) {
+        slide.classList.remove(OPACITY_VISIBLE);
+        slide.classList.add(OPACITY_HIDDEN);
+
+        window.setTimeout(() => {
+            slide.classList.remove(ACTIVE_SLIDE);
+        }, FADE_DURATION);
+    }
+
+    function showNextSlide() {
+        hideSlide(slides[currentSlide]);
+
+        currentSlide = (currentSlide + 1) % slides.length;
+
+        showSlide(slides[currentSlide]);
+    }
+
+    function startSlideshow() {
+        if (slides.length <= 1) return;
+
+        if (slideshowInterval !== undefined) return;
+
+        slideshowInterval = window.setInterval(showNextSlide, SLIDESHOW_INTERVAL);
+    }
+
+    function stopSlideshow() {
+        if (slideshowInterval !== undefined) {
+            window.clearInterval(slideshowInterval);
+            slideshowInterval = undefined;
+        }
+    }
+
+    //==================================
+    // Inicializador
+    //==================================
+
+    startSlideshow();
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            stopSlideshow();
+        } else {
+            startSlideshow();
+        }
+    });
+
+</script>

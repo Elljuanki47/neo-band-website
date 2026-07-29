@@ -14,3 +14,6 @@ dist/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Imágenes locales del slideshow
+public/images/slideshow/

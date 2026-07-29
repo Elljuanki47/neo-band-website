@@ -45,8 +45,21 @@ export const bandConfig = {
     }
   ],
 
-  hero: {
-    background: "/images/releases/neo-amuleto.png",
+hero: {
+    images: [
+      {
+        src: "/images/slideshow/VGIV-13.jpg",
+        position: "center 30%"
+      },
+      {
+        src: "/images/slideshow/VGIV-8.jpg",
+        position: "center top"
+      },
+      {
+        src: "/images/slideshow/VGIV-3.jpg",
+        position: "70% center"
+      }
+      ]
   },
 
   latestRelease: {

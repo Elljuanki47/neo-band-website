@@ -1,5 +1,6 @@
 ---
 import { bandConfig } from '../config/band.config';
+import HeroSlideshow from './HeroSlideshow.astro';
 ---
 
 
@@ -10,15 +11,11 @@ import { bandConfig } from '../config/band.config';
 >
 
     <!-- Imagen de fondo -->
-    <img 
-        src={bandConfig.hero.background}
-        alt=""
-        class="absolute inset-0 w-full h-full object-cover opacity-60"
-    />
+    <HeroSlideshow />
 
     <!-- Overlay oscuro -->
-    <div class="absolute inset-0 bg-brand-black/40"></div>
-
+    <div class="absolute inset-0 bg-brand-black/55"></div>
+    
     <!-- Gradiente inferior -->
     <div class="absolute bottom-0 left-0 w-full h-40 bg-linear-to-t from-brand-black to-transparent"></div>
 
