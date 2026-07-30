@@ -14,7 +14,9 @@ export const bandConfig = {
   social: {
     instagram: "https://www.instagram.com/neo.bandaa",
     spotify: "https://open.spotify.com/intl-es/artist/3XAdf3T9gXyjNPa9MKDmDZ?si=0FgbG6LsS3ilJKO0ugsmZg",
-    youtube: "https://youtu.be/Yc30lzQd_B4?si=_2YAy67FbfpQlq5d",
+    youtube: "https://www.youtube.com/channel/UC4LDm-w6s7yZsxoXwa2886g",
+    tiktok: "https://www.tiktok.com/@neo.bandaa",
+    bookingEmail: "neobandacontacto@gmail.com",
   },
 
   navigation: [
