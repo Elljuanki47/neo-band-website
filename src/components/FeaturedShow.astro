@@ -1,0 +1,60 @@
+---
+import { bandConfig } from "../config/band.config";
+
+const show = bandConfig.featuredShow;
+
+const formattedDate = new Intl.DateTimeFormat("es-AR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+}).format(new Date(`${show.date}T12:00:00`));
+
+const sectionLabel =
+    show.status === "upcoming" ? "PRÓXIMO SHOW" : "ÚLTIMA FECHA";
+---
+
+<section id="shows" class="bg-brand-black px-6 py-24 text-brand-white">
+    <div class="mx-auto grid max-w-6xl gap-12 md:grid-cols-2 md:items-center">
+        <div>
+            <p class="text-sm uppercase tracking-[0.3em] text-gray-400">
+                {sectionLabel}
+            </p>
+
+            <h2 class="mt-3 font-display text-5xl tracking-widest sm:text-6xl md:text-7xl">
+                {show.title}
+            </h2>
+
+            <p class="mt-6 max-w-xl text-lg leading-relaxed text-brand-white/75">
+                {show.description}
+            </p>
+
+            <div class="mt-8 space-y-3 text-brand-white/80">
+                <p>
+                    <span class="font-semibold text-brand-white">Fecha:</span>{" "}
+                    {formattedDate} · Puertas {show.doorsTime}
+                </p>
+
+                <p>
+                    <span class="font-semibold text-brand-white">Lugar:</span>{" "}
+                    {show.venue} · {show.address}
+                </p>
+            </div>
+
+            <a 
+                href={show.directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="mt-8 inline-flex border border-brand-white px-5 py-3 text-sm uppercase tracking-[0.15em] transition hover:border-brand-red hover:text-brand-red"
+            >
+                Cómo llegar
+            </a>
+        </div>
+
+        <iframe
+            src={show.mapEmbedUrl}
+            title={`Mapa de ${show.venue}`}
+            loading="lazy"
+            class="h-80 w-full rounded-xl border border-white/10 grayscale transition duration-300 hover:grayscale-0 md:h-96"
+        ></iframe>
+    </div>
+</section>

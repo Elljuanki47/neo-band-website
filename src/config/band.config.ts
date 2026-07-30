@@ -67,4 +67,18 @@ hero: {
     spotifyUrl: "https://open.spotify.com/intl-es/track/36gb8l3yhcFgSHPQZg55Qm?si=297522803d324dd8",
     spotifyEmbed: "https://open.spotify.com/embed/track/36gb8l3yhcFgSHPQZg55Qm?utm_source=generator&si=f5ae5c9f2f334071"
   },
+
+  featuredShow: {
+    status: "past",
+    title: "CUÁNDO TOCA NEO?",
+    date: "2026-07-25",
+    doorsTime: "20:00",
+    venue: "El Emergente",
+    address: "Figueroa 1030",
+    description: "Presentación en vivo de AMULETO junto al show debut de Vieja Habana.",
+    mapEmbedUrl:
+      "https://www.google.com/maps?q=El%20Emergente%2C%20Figueroa%201030%2C%20Buenos%20Aires%2C%20Argentina&output=embed",
+    directionsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=El%20Emergente%2C%20Figueroa%201030%2C%20Buenos%20Aires%2C%20Argentina",
+  },
 };
