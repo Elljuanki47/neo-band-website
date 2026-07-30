@@ -12,7 +12,7 @@ const rightLinks = bandConfig.navigation.slice(middleIndex);
     class="fixed top-0 left-0 z-50 w-full transition-all duration-300"
 >
     <nav 
-        aria-label="Navegacion principal"
+        aria-label="Navegación principal"
         class="mx-auto flex max-w-6xl items-center justify-between px-6 py-3"
     >
         <div class="hidden md:flex items-center gap-8">
@@ -42,14 +42,22 @@ const rightLinks = bandConfig.navigation.slice(middleIndex);
         <button
             id="menu-button"
             type="button"
-            aria-label="Abrir menu"
+            aria-label="Abrir menú"
             aria-controls="mobile-menu"
             aria-expanded="false"
             class="md:hidden text-brand-white"
         >
-            <span class="block w-6 h-px bg-current mb-1.5"></span>
-            <span class="block w-6 h-px bg-current mb-1.5"></span>
-            <span class="block w-6 h-px bg-current"></span>
+            <span 
+                id="menu-line-top"
+                class="block h-px w-6 bg-current transition-transform duration-300"
+            ></span>
+            <span 
+                id="menu-line-middle"
+                class="my-1.5 block h-px w-6 bg-current transition-opacity duration-300"
+            ></span>
+            <span 
+                id="menu-line-bottom"
+                class="block w-6 h-px bg-current transition-transform duration-300"></span>
         </button>
 
         <div class="hidden md:flex items-center gap-8">
@@ -89,12 +97,19 @@ const rightLinks = bandConfig.navigation.slice(middleIndex);
     const navbar = document.getElementById("navbar");
     const menuButton = document.getElementById("menu-button");
     const mobileMenu = document.getElementById("mobile-menu");
+    const menuLineTop = document.getElementById("menu-line-top");
+    const menuLineMiddle = document.getElementById("menu-line-middle");
+    const menuLineBottom = document.getElementById("menu-line-bottom");
     const mobileLinks = document.querySelectorAll(".mobile-link");
+
+    function isMobileMenuOpen() {
+        return mobileMenu?.classList.contains("opacity-100") ?? false;
+    }
 
     function updateNavbar() {
         if (!navbar) return;
 
-        if (window.scrollY > 40) {
+        if (window.scrollY > 40 || isMobileMenuOpen()) {
             navbar.classList.add(
                 "bg-brand-black/90",
                 "backdrop-blur-md",
@@ -107,6 +122,18 @@ const rightLinks = bandConfig.navigation.slice(middleIndex);
                 "shadow-lg"
             );
         }
+    }
+
+    function showCloseIcon() {
+        menuLineTop?.classList.add("translate-y-[7px]", "rotate-45");
+        menuLineMiddle?.classList.add("opacity-0");
+        menuLineBottom?.classList.add("-translate-y-[7px]", "-rotate-45");
+    }
+
+    function showMenuIcon() {
+        menuLineTop?.classList.remove("translate-y-[7px]", "rotate-45");
+        menuLineMiddle?.classList.remove("opacity-0");
+        menuLineBottom?.classList.remove("-translate-y-[7px]", "-rotate-45");
     }
 
     function toggleMobileMenu() {
@@ -127,6 +154,8 @@ const rightLinks = bandConfig.navigation.slice(middleIndex);
                 "-translate-y-4",
                 "pointer-events-none"
             );
+
+            showMenuIcon();
         } else {
             mobileMenu.classList.remove(
                 "opacity-0",
@@ -139,24 +168,26 @@ const rightLinks = bandConfig.navigation.slice(middleIndex);
                 "translate-y-0",
                 "pointer-events-auto"
             );
+
+            showCloseIcon();
         }
 
         menuButton.setAttribute("aria-expanded", String(!isOpen));
         menuButton.setAttribute(
             "aria-label",
-            isOpen ? "Abrir menu" : "Cerrar menu"
+            isOpen ? "Abrir menú" : "Cerrar menú"
         );
+
+        updateNavbar()
     }
 
     menuButton?.addEventListener("click", toggleMobileMenu);
 
     mobileLinks.forEach((link) => {
         link.addEventListener("click", () => {
-            if (!mobileMenu || !menuButton) return;
-
-            mobileMenu.classList.add("opacity-0");
-            menuButton.setAttribute("aria-expanded", "false");
-            menuButton.setAttribute("aria-label", "Abrir menu");
+            if (isMobileMenuOpen()) {
+                toggleMobileMenu();
+            }
         });
     });
 

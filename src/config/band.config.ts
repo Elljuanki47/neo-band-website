@@ -7,8 +7,7 @@ export const bandConfig = {
   
   tagline: "Rock Alternativo",
 
-  description:
-    "Sitio oficial de NEO. Musica, shows y novedades",
+  description: "Sitio oficial de NEO. Música, shows y novedades",
 
   logo: "/images/logo/neo-logo.jpg",
 
@@ -24,7 +23,7 @@ export const bandConfig = {
       href: "#inicio",
     },
     {
-      label: "Musica",
+      label: "Música",
       href: "#musica",
     },
     {

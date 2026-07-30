@@ -8,7 +8,7 @@
     --color-brand-red: #e10600;
 }
 
-@keyframes fase-up {
+@keyframes fade-up {
     from {
         opacity: 0;
         transform: translateY(20px);
@@ -21,7 +21,7 @@
 }
 
 .animate-fade-up {
-    animation: fase-up 0.8s ease-out forwards;
+    animation: fade-up 0.8s ease-out forwards;
     opacity: 0;
 }
 
