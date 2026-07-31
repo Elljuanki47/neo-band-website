@@ -28,15 +28,29 @@ const sectionLabel =
                 {show.description}
             </p>
 
-            <div class="mt-8 space-y-3 text-brand-white/80">
+            <div class="mt-8 space-y-4 text-brand-white/80">
+                <div>
+                    <h3 class="mt-2 text-2xl font-semibold text-brand-white">
+                        {show.venue}
+                    </h3>
+                </div>
+
                 <p>
                     <span class="font-semibold text-brand-white">Fecha:</span>{" "}
                     {formattedDate} · Puertas {show.doorsTime}
                 </p>
 
                 <p>
-                    <span class="font-semibold text-brand-white">Lugar:</span>{" "}
-                    {show.venue} · {show.address}
+                    <span class="font-semibold text-brand-white">Direccion:</span>{" "}
+
+                    <a 
+                    href={show.locationUurl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="transition hover:text-brand-red focus-visible:text-brand-red focus-visible:outline-none"
+                    >
+                        {show.address} ↗
+                    </a>
                 </p>
             </div>
 

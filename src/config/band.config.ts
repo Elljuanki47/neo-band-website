@@ -77,6 +77,7 @@ hero: {
     doorsTime: "20:00",
     venue: "El Emergente",
     address: "Figueroa 1030",
+    locationUurl: "https://www.google.com/maps/search/?api=1&query=El%20Emergente%2C%20Figueroa%201030%2C%20Buenos%20Aires%2C%20Argentina",
     description: "Presentación en vivo de AMULETO junto al show debut de Vieja Habana.",
     mapEmbedUrl:
       "https://www.google.com/maps?q=El%20Emergente%2C%20Figueroa%201030%2C%20Buenos%20Aires%2C%20Argentina&output=embed",
