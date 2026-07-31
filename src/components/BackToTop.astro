@@ -1,0 +1,44 @@
+<button
+    id="back-to-top"
+    type="button"
+    aria-label="Volver al inicio"
+    class="fixed bottom-6 right-6 z-40 flex h-12 w-12 translate-y-2 items-center justify-center border border-white/30 bg-brand-black/90 text-xl text-brand-white opacity-0 pointer-events-none backdrop-blur-md transition-all duration-300 hover:border-brand-red hover:text-brand-red focus-visible:border-brand-red focus-visible:text-brand-red focus-visible:outline-none"
+>
+    <span aira-hidden="true">↑</span>
+</button>
+
+<script>
+    const backToTopButton = document.getElementById("back-to-top");
+    const SCROLL_THRESHOLD = 400;
+
+    function updateBackToTopButton() {
+        if (!backToTopButton) return;
+
+        const shouldBeVisible = window.scrollY > SCROLL_THRESHOLD;
+
+        backToTopButton.classList.toggle("opacity-100", shouldBeVisible);
+        backToTopButton.classList.toggle("translate-y-0", shouldBeVisible);
+        backToTopButton.classList.toggle("pointer-events-auto", shouldBeVisible);
+
+        backToTopButton.classList.toggle("opacity-0", !shouldBeVisible);
+        backToTopButton.classList.toggle("translate-y-2", !shouldBeVisible);
+        backToTopButton.classList.toggle("pointer-events-none", !shouldBeVisible);
+    }
+
+    backToTopButton?.addEventListener("click", () => {
+        const prefersReduceMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches;
+
+        window.scrollTo({
+            top: 0,
+            behavior: prefersReduceMotion ? "auto" : "smooth",
+        });
+    });
+
+    updateBackToTopButton();
+
+    window.addEventListener("scroll", updateBackToTopButton, {
+        passive: true,
+    });
+</script>
