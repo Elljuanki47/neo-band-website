@@ -29,16 +29,16 @@ export const bandConfig = {
       href: "#musica",
     },
     {
+      label: "Shows",
+      href: "#shows",
+    },
+    {
       label: "Banda",
       href: "#banda",
     },
     {
       label: "Redes",
       href: "#contacto",
-    },
-    {
-      label: "Shows",
-      href: "#shows",
     },
     {
       label: "Contacto",
