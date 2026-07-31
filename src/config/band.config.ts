@@ -83,4 +83,51 @@ hero: {
     directionsUrl:
       "https://www.google.com/maps/dir/?api=1&destination=El%20Emergente%2C%20Figueroa%201030%2C%20Buenos%20Aires%2C%20Argentina",
   },
+
+about: {
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. NEO es una banda de rock alternativo que busca transformar cada fecha en una experiencia intensa y cercana.",
+    members: [
+            {
+        name: "Santiago",
+        nickname: "El Tano",
+        surname: "Giulio",
+        role: "Guitarra líder",
+        bio: "Bio pendiente de confirmar.",
+        instagram: "https://www.instagram.com/santigiulioo/",
+      },
+      {
+        name: "Pakius",
+        nickname: "",
+        surname: "",
+        role: "Bajo",
+        bio: "Bio pendiente de confirmar.",
+        instagram: "https://www.instagram.com/pakius_5/",
+      },
+      {
+        name: "Joaco",
+        nickname: "",
+        surname: "",
+        role: "Voz",
+        bio: "Bio pendiente de confirmar.",
+        instagram: "https://www.instagram.com/juakoo.pe/",
+      },
+      {
+        name: "Bruno",
+        nickname: "",
+        surname: "Bonica",
+        role: "Guitarra rítmica",
+        bio: "Bio pendiente de confirmar.",
+        instagram: "https://www.instagram.com/brunobonica/",
+      },
+      {
+        name: "Ezequiel",
+        nickname: "El Colo",
+        surname: "Zarate",
+        role: "Batería",
+        bio: "Bio pendiente de confirmar.",
+        instagram: "https://www.instagram.com/ezeqcolo/",
+      },
+    ],
+  },
 };

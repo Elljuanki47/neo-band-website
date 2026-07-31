@@ -1,0 +1,136 @@
+---
+import { boolean } from "astro:schema";
+import { bandConfig } from "../config/band.config";
+
+const members = bandConfig.about.members.map((member) => ({
+    ...member,
+    fullName: [
+        member.name,
+        member.nickname ? `"${member.nickname}"` : "",
+        member.surname,
+    ]
+        .filter(Boolean)
+        .join(" "),
+}));
+
+---
+
+<div class="mt-20 border-t border-white/15 pt-16" data-members-carousel>
+    <p class="text-sm uppercase tracking-[0.3em] text-gray-400">
+        Integrantes
+    </p>
+
+    {
+        members.map((member, index) => (
+            <article
+                class={`member-slide mt-8 grid gap-10 md:grid-cols-2 md:items-center ${
+                   index === 0 ? "" : "hidden" 
+                }`}
+            >
+                <div class="flex aspect-4/5 items-center justify-center border border-white/15 bg-white/5">
+                    <p class="text-center text-sm uppercase tracking-[0.25em] text-brand-white/50">
+                        Foto proximamente
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-sm uppercase tracking-[0.3em] text-gray-400">
+                        {member.role}
+                    </p>
+
+                    <h3 class="mt-3 font-display text-4xl tracking-widest sm:text-6xl">
+                        {member.fullName}
+                    </h3>
+
+                    <p class="mt-6 max-w-xl text-lg leading-relaxed text-brand-white/75">
+                        {member.bio}
+                    </p>
+
+                    <a 
+                        href={member.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="mt-8 inline-flex border border-white px-5 py-3 text-sm uppercase tracking-[0.15em] text-brand-white transition-colors duration-300 hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
+                    >
+                        Instagram personal ↗
+                    </a>
+                </div>
+            </article>
+        ))
+    }
+
+    <div class="mt-10 flex items-center justify-between">
+        <button
+            type="button"
+            data-carousel-previous
+            aria-label="Ver integrante anterior"
+            class="border border-white px-4 py-2 text-xl text-brand-white transition-colors hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
+        >
+            ←
+        </button>
+
+        <p
+            data-carousel-indicator
+            class="text-sm uppercaser tracking-[0.2em] text-brand-white/60"
+        >
+            1 / {members.length}
+        </p>
+
+        <button
+            type="button"
+            data-carousel-next
+            aria-label="Ver integrante siguiente"
+            class="boreder border-white px-4 py-2 text-xl text-brand-white transition-colors hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
+        >
+            →
+        </button>
+    </div>
+</div>
+
+<script>
+    const carousel = document.querySelector<HTMLElement>(
+        "[data-members-carousel]"
+    );
+
+    if (carousel) {
+        const slides = carousel.querySelectorAll<HTMLElement>(".member-slide");
+
+        const previousButton = carousel.querySelector<HTMLButtonElement>(
+            "[data-carousel-previous]"
+        );
+
+        const nextButton = carousel.querySelector<HTMLButtonElement>(
+            "[data-carousel-next]"
+        );
+
+        const indicator = carousel.querySelector<HTMLElement>(
+            "[data-carousel-indicator]"
+        );
+
+        let currentMember = 0;
+
+        function showMember(index: number) {
+            slides[currentMember].classList.add("hidden");
+            slides[index].classList.remove("hidden");
+
+            currentMember = index;
+
+            if (indicator) {
+                indicator.textContent = `${currentMember + 1} / ${slides.length}`;
+            }
+        }
+
+        previousButton?.addEventListener("click", () => {
+            const nextMember = 
+                (currentMember - 1 + slides.length) % slides.length;
+
+            showMember(nextMember);
+        });
+
+        nextButton?.addEventListener("click", () => {
+            const nextMember = (currentMember + 1) % slides.length;
+
+            showMember(nextMember);
+        });
+    }
+</script>
