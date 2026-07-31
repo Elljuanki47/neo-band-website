@@ -25,7 +25,10 @@ const carouselMembers = [
         Integrantes
     </p>
     
-    <div class="mt-8 overflow-hidden">
+    <div 
+        class="mt-8 overflow-hidden touch-pan-y"
+        data-carousel-viewport
+    >
         <div
             class="member-track flex transition-transform duration-500 ease-out motion-reduce:transition-none"
             style="transform: translateX(-100%);"
@@ -33,9 +36,9 @@ const carouselMembers = [
             {
                 carouselMembers.map((member) => (
                     <article class="member-slide w-full shrink-0 grid gap-10 md:grid-cols-2 md:items-center">
-                        <div class="flex aspect-4/5 items-center justify-center border border-white/15 bg-white/5">
+                        <div class="flex aspect-[4/5] items-center justify-center border border-white/15 bg-white/5">
                             <p class="text-center text-sm uppercase tracking-[0.25em] text-brand-white/50">
-                                Foto proximamente
+                                Foto próximamente
                             </p>
                         </div>
 
@@ -56,7 +59,7 @@ const carouselMembers = [
                                 href={member.instagram}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="mt-8 inline-flex border border-white px-5 py-3 text-sm uppercase trackiong-[0.15em] text-brand-white transition-colors duration-300 hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
+                                class="mt-8 inline-flex border border-white px-5 py-3 text-sm uppercase tracking-[0.15em] text-brand-white transition-colors duration-300 hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
                             >
                                 Instagram personal ↗
                             </a>
@@ -72,7 +75,7 @@ const carouselMembers = [
             type="button"
             data-carousel-previous
             aria-label="Ver integrante anterior"
-            class="border border-white px-4 py-2 text-xl terxt-brand-white transition-colors hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
+            class="border border-white px-4 py-2 text-xl text-brand-white transition-colors hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
         >
             ←
         </button>
@@ -104,6 +107,9 @@ const carouselMembers = [
     if (carousel) {
         const track = carousel.querySelector<HTMLElement>(".member-track");
         const slides = carousel.querySelectorAll<HTMLElement>(".member-slide");
+        const viewport = carousel.querySelector<HTMLElement>(
+            "[data-carousel-viewport]"
+        );
 
         const previousButton = carousel.querySelector<HTMLButtonElement>(
             "[data-carousel-previous]"
@@ -207,6 +213,39 @@ const carouselMembers = [
 
         nextButton?.addEventListener("click", () => {
             moveToSlide(currentSlide + 1);
+        });
+
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        const SWIPE_THRESHOLD = 50;
+
+        viewport?.addEventListener("touchstart", (event) => {
+            const touch = event.changedTouches[0];
+
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        });
+
+        viewport?.addEventListener("touchend", (event) => {
+            const touch = event.changedTouches[0];
+
+            const horizontalDistance = touchStartX - touch.clientX;
+            const verticalDistance = touchStartY - touch.clientY;
+
+            const isHorizontalSwipe =
+                Math.abs(horizontalDistance) > Math.abs(verticalDistance);
+            
+            const passedThreshold =
+                Math.abs(horizontalDistance) >= SWIPE_THRESHOLD;
+
+            if (!isHorizontalSwipe || !passedThreshold) return;
+
+            if (horizontalDistance > 0) {
+                moveToSlide(currentSlide + 1);
+            } else {
+                moveToSlide(currentSlide - 1);
+            }
         });
     }
 </script>
