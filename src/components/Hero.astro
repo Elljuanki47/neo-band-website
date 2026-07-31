@@ -22,7 +22,7 @@ import HeroSlideshow from './HeroSlideshow.astro';
 
 
     <!-- Contenido principal -->
-    <div class="relative z-10 flex flex-col items-center">
+    <div class="relative z-10 flex w-full flex-col items-center">
 
         <!-- Logo -->
         <img 
@@ -39,27 +39,6 @@ import HeroSlideshow from './HeroSlideshow.astro';
             {bandConfig.tagline}
         </p>
 
-        <a 
-            href={bandConfig.latestRelease.spotifyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="
-            mt-14
-            px-8
-            py-3
-            rounded-full
-            font-bold
-            border
-            border-white
-            text-brand-white
-            hover:bg-brand-white
-            hover:text-brand-black
-            hover:scale-105
-            transition-all
-            duration-300"
-        >
-            ▶ {bandConfig.latestRelease.title}
-        </a>
     </div>
 
 

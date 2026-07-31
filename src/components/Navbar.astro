@@ -13,9 +13,9 @@ const rightLinks = bandConfig.navigation.slice(middleIndex);
 >
     <nav 
         aria-label="Navegación principal"
-        class="mx-auto flex max-w-6xl items-center justify-between px-6 py-3"
+        class="mx-auto flex max-w-6xl items-center justify-between px-6 py-3 md:grid md:grid-cols-[1fr_auto_1fr]"
     >
-        <div class="hidden md:flex items-center gap-8">
+        <div class="hidden items-center gap-8 md:flex md:justify-self-start">
             {
                 leftLinks.map((link) => (
                     <a 
@@ -60,7 +60,7 @@ const rightLinks = bandConfig.navigation.slice(middleIndex);
                 class="block w-6 h-px bg-current transition-transform duration-300"></span>
         </button>
 
-        <div class="hidden md:flex items-center gap-8">
+        <div class="hidden items-center gap-8 md:flex md:justify-self-end">
             {
                 rightLinks.map((link) => (
                     <a 

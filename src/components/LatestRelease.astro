@@ -22,9 +22,6 @@ import { bandConfig } from "../config/band.config";
                 {bandConfig.latestRelease.title}
             </h2>
 
-            <p class="mt-10 text-xs uppercase tracking-[0.3em] text-gray-400">
-                Escuchar ahora
-            </p>
 
             <iframe
                 src={bandConfig.latestRelease.spotifyEmbed}
@@ -36,6 +33,14 @@ import { bandConfig } from "../config/band.config";
                 class="mt-5 w-full max-w-80 rounded-xl transition hover:scale-[1.02]"
             />
 
+            <a 
+                href={bandConfig.latestRelease.spotifyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="mt-6 inline-flex items-center border border-white px-5 py-3 text-sm uppercase tracking-[0.15em] text-brand-white transition-colors duration-300 hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
+            >
+                Escuchar en Spotify
+            </a>
         </div>
 
     </div>
