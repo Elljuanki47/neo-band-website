@@ -1,5 +1,4 @@
 ---
-import { boolean } from "astro:schema";
 import { bandConfig } from "../config/band.config";
 
 const members = bandConfig.about.members.map((member) => ({
@@ -13,65 +12,74 @@ const members = bandConfig.about.members.map((member) => ({
         .join(" "),
 }));
 
+const carouselMembers = [
+    members[members.length - 1],
+    ...members,
+    members[0],
+];
+
 ---
 
 <div class="mt-20 border-t border-white/15 pt-16" data-members-carousel>
     <p class="text-sm uppercase tracking-[0.3em] text-gray-400">
         Integrantes
     </p>
+    
+    <div class="mt-8 overflow-hidden">
+        <div
+            class="member-track flex transition-transform duration-500 ease-out motion-reduce:transition-none"
+            style="transform: translateX(-100%);"
+        >
+            {
+                carouselMembers.map((member) => (
+                    <article class="member-slide w-full shrink-0 grid gap-10 md:grid-cols-2 md:items-center">
+                        <div class="flex aspect-4/5 items-center justify-center border border-white/15 bg-white/5">
+                            <p class="text-center text-sm uppercase tracking-[0.25em] text-brand-white/50">
+                                Foto proximamente
+                            </p>
+                        </div>
 
-    {
-        members.map((member, index) => (
-            <article
-                class={`member-slide mt-8 grid gap-10 md:grid-cols-2 md:items-center ${
-                   index === 0 ? "" : "hidden" 
-                }`}
-            >
-                <div class="flex aspect-4/5 items-center justify-center border border-white/15 bg-white/5">
-                    <p class="text-center text-sm uppercase tracking-[0.25em] text-brand-white/50">
-                        Foto proximamente
-                    </p>
-                </div>
+                        <div>
+                            <p class="text-sm uppercase tracking-[0.3em] text-gray-400">
+                                {member.role}
+                            </p>
 
-                <div>
-                    <p class="text-sm uppercase tracking-[0.3em] text-gray-400">
-                        {member.role}
-                    </p>
+                            <h3 class="mt-3 font-display text-4xl tracking-widest sm:text-6xl">
+                                {member.fullName}
+                            </h3>
 
-                    <h3 class="mt-3 font-display text-4xl tracking-widest sm:text-6xl">
-                        {member.fullName}
-                    </h3>
+                            <p class="mt-6 max-w-xl text-lg leading-relaxed text-brand-white/75">
+                                {member.bio}
+                            </p>
 
-                    <p class="mt-6 max-w-xl text-lg leading-relaxed text-brand-white/75">
-                        {member.bio}
-                    </p>
-
-                    <a 
-                        href={member.instagram}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="mt-8 inline-flex border border-white px-5 py-3 text-sm uppercase tracking-[0.15em] text-brand-white transition-colors duration-300 hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
-                    >
-                        Instagram personal ↗
-                    </a>
-                </div>
-            </article>
-        ))
-    }
+                            <a 
+                                href={member.instagram}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="mt-8 inline-flex border border-white px-5 py-3 text-sm uppercase trackiong-[0.15em] text-brand-white transition-colors duration-300 hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
+                            >
+                                Instagram personal ↗
+                            </a>
+                        </div>
+                    </article>
+                ))
+            }
+        </div>
+    </div>
 
     <div class="mt-10 flex items-center justify-between">
         <button
             type="button"
             data-carousel-previous
             aria-label="Ver integrante anterior"
-            class="border border-white px-4 py-2 text-xl text-brand-white transition-colors hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
+            class="border border-white px-4 py-2 text-xl terxt-brand-white transition-colors hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
         >
             ←
         </button>
 
         <p
             data-carousel-indicator
-            class="text-sm uppercaser tracking-[0.2em] text-brand-white/60"
+            class="text-sm uppercase tracking-[0.2em] text-brand-white/60"
         >
             1 / {members.length}
         </p>
@@ -80,11 +88,12 @@ const members = bandConfig.about.members.map((member) => ({
             type="button"
             data-carousel-next
             aria-label="Ver integrante siguiente"
-            class="boreder border-white px-4 py-2 text-xl text-brand-white transition-colors hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
+            class="border border-white px-4 py-2 text-xl text-brand-white transition-colors hover:bg-brand-white hover:text-brand-black focus-visible:bg-brand-white focus-visible:text-brand-black focus-visible:outline-none"
         >
             →
         </button>
     </div>
+
 </div>
 
 <script>
@@ -93,6 +102,7 @@ const members = bandConfig.about.members.map((member) => ({
     );
 
     if (carousel) {
+        const track = carousel.querySelector<HTMLElement>(".member-track");
         const slides = carousel.querySelectorAll<HTMLElement>(".member-slide");
 
         const previousButton = carousel.querySelector<HTMLButtonElement>(
@@ -107,30 +117,96 @@ const members = bandConfig.about.members.map((member) => ({
             "[data-carousel-indicator]"
         );
 
-        let currentMember = 0;
+        const memberCount = slides.length - 2;
+        const prefersReducedMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches;
 
-        function showMember(index: number) {
-            slides[currentMember].classList.add("hidden");
-            slides[index].classList.remove("hidden");
+        let currentSlide = 1;
+        let isTransitioning = false;
 
-            currentMember = index;
+        function updateIndicator() {
+            const currentMember = 
+                (currentSlide - 1 + memberCount) % memberCount;
 
             if (indicator) {
-                indicator.textContent = `${currentMember + 1} / ${slides.length}`;
+                indicator.textContent = `${currentMember + 1} / ${memberCount}`;
             }
         }
 
-        previousButton?.addEventListener("click", () => {
-            const nextMember = 
-                (currentMember - 1 + slides.length) % slides.length;
+        function updateTrackPosition() {
+            track?.style.setProperty(
+                "transform",
+                `translateX(-${currentSlide * 100}%)`
+            );
+        }
 
-            showMember(nextMember);
+        function jumpToSlide(index: number) {
+            if (!track) return;
+
+            track.classList.remove(
+                "transition-transform",
+                "duration-500",
+                "ease-out"
+            );
+
+            currentSlide = index;
+            updateTrackPosition();
+            updateIndicator();
+
+            void track.offsetWidth;
+
+            track.classList.add(
+                "transition-transform",
+                "duration-500",
+                "ease-out"
+            );
+        }
+
+        function moveToSlide(index: number) {
+            if (isTransitioning) return;
+
+            currentSlide = index;
+
+            if (prefersReducedMotion) {
+                if (currentSlide === 0) {
+                    currentSlide = memberCount;
+                }
+
+                if (currentSlide === memberCount + 1) {
+                    currentSlide = 1;
+                }
+
+                updateTrackPosition();
+                updateIndicator();
+                return;
+            }
+
+            isTransitioning = true;
+            updateTrackPosition();
+            updateIndicator();
+        }
+
+        track?.addEventListener("transitionend", (event) => {
+            if (event.propertyName !== "transform") return;
+
+            if (currentSlide === 0) {
+                jumpToSlide(memberCount);
+            }
+
+            if (currentSlide === memberCount + 1) {
+                jumpToSlide(1);
+            }
+
+            isTransitioning = false;
+        });
+
+        previousButton?.addEventListener("click", () => {
+            moveToSlide(currentSlide - 1);
         });
 
         nextButton?.addEventListener("click", () => {
-            const nextMember = (currentMember + 1) % slides.length;
-
-            showMember(nextMember);
+            moveToSlide(currentSlide + 1);
         });
     }
 </script>
