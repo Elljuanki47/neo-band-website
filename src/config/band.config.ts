@@ -47,21 +47,29 @@ export const bandConfig = {
   ],
 
 hero: {
-    images: [
-      {
-        src: "/images/slideshow/VGIV-13.jpg",
-        position: "center 30%"
-      },
-      {
-        src: "/images/slideshow/VGIV-8.jpg",
-        position: "center top"
-      },
-      {
-        src: "/images/slideshow/VGIV-3.jpg",
-        position: "70% center"
-      }
-      ]
-  },
+  images: [
+    {
+      src: "/images/slideshow/VGIV-8.jpg",
+      position: "center 30%",
+    },
+    {
+      src: "/images/slideshow/VGIV-3.jpg",
+      position: "center top",
+    },
+    {
+      src: "/images/slideshow/VGIV-7.jpg",
+      position: "70% center",
+    },
+    {
+      src: "/images/slideshow/VGIV-4.jpg",
+      position: "center center",
+    },
+    {
+      src: "/images/slideshow/VGIV-1.jpg",
+      position: "center center",
+    },
+  ],
+},
 
   latestRelease: {
     title: "Amuleto",
