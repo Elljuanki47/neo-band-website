@@ -38,7 +38,7 @@ export const bandConfig = {
     },
     {
       label: "Redes",
-      href: "#contacto",
+      href: "#redes",
     },
     {
       label: "Contacto",
