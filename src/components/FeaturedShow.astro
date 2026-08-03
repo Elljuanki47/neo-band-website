@@ -1,61 +1,54 @@
----
-import { bandConfig } from "../config/band.config";
-
-const show = bandConfig.featuredShow;
-
-const formattedDate = new Intl.DateTimeFormat("es-AR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-}).format(new Date(`${show.date}T12:00:00`));
-
-const sectionLabel =
-    show.status === "upcoming" ? "PRÓXIMO SHOW" : "ÚLTIMA FECHA";
----
-
 <section id="shows" class="bg-brand-black px-6 py-24 text-brand-white">
     <div class="mx-auto grid max-w-6xl gap-12 md:grid-cols-2 md:items-center">
         <div>
-            <p class="text-sm uppercase tracking-[0.3em] text-gray-400">
-                {sectionLabel}
+            <p
+                id="featured-show-label"
+                class="text-sm uppercase tracking-[0.3em] text-gray-400"
+            >
+                CARGANDO SHOW
             </p>
 
-            <h2 class="mt-3 font-display text-5xl tracking-widest sm:text-6xl md:text-7xl">
-                {show.title}
+            <h2
+                id="featured-show-title"
+                class="mt-3 font-display text-5xl tracking-widest sm:text-6xl md:text-7xl"
+            >
+                CARGANDO...
             </h2>
 
-            <p class="mt-6 max-w-xl text-lg leading-relaxed text-brand-white/75">
-                {show.description}
-            </p>
+            <p
+                id="featured-show-description"
+                class="mt-6 max-w-xl text-lg leading-relaxed text-brand-white/75"
+            ></p>
 
             <div class="mt-8 space-y-4 text-brand-white/80">
                 <div>
-                    <h3 class="mt-2 text-2xl font-semibold text-brand-white">
-                        {show.venue}
-                    </h3>
+                    <h3
+                        id="featured-show-venue"
+                        class="mt-2 text-2xl font-semibold text-brand-white"
+                    ></h3>
                 </div>
 
-                <p>
-                    <span class="font-semibold text-brand-white">Fecha:</span>{" "}
-                    {formattedDate} · Puertas {show.doorsTime}
-                </p>
+                <p id="featured-show-date"></p>
 
                 <p>
-                    <span class="font-semibold text-brand-white">Direccion:</span>{" "}
+                    <span class="font-semibold text-brand-white">
+                        Direccion:
+                    </span>
 
-                    <a 
-                    href={show.locationUurl}
+                    <a
+                    id="featured-show-location"
+                    href="#"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="transition hover:text-brand-red focus-visible:text-brand-red focus-visible:outline-none"
                     >
-                        {show.address} ↗
                     </a>
                 </p>
             </div>
 
-            <a 
-                href={show.directionsUrl}
+            <a
+                id="featured-show-directions"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="mt-8 inline-flex border border-brand-white px-5 py-3 text-sm uppercase tracking-[0.15em] transition hover:border-brand-red hover:text-brand-red"
@@ -65,10 +58,123 @@ const sectionLabel =
         </div>
 
         <iframe
-            src={show.mapEmbedUrl}
-            title={`Mapa de ${show.venue}`}
+            id="featured-show-map"
+            src="about:blank"
+            title="Mapa del show"
             loading="lazy"
             class="h-80 w-full rounded-xl border border-white/10 md:h-96"
         ></iframe>
     </div>
 </section>
+
+<script>
+    const API_URL = "http://127.0.0.1:8000";
+
+    const labelElement = document.getElementById(
+        "featured-show-label"
+    ) as HTMLParagraphElement;
+
+    const titleElement = document.getElementById(
+        "featured-show-title"
+    ) as HTMLHeadingElement;
+
+    const descriptionElement = document.getElementById(
+        "featured-show-description"
+    ) as HTMLParagraphElement;
+
+    const venueElement = document.getElementById(
+        "featured-show-venue"
+    ) as HTMLHeadingElement;
+
+    const dateElement = document.getElementById(
+        "featured-show-date"
+    ) as HTMLParagraphElement;
+
+    const locationElement = document.getElementById(
+        "featured-show-location"
+    ) as HTMLAnchorElement;
+
+    const directionsElement = document.getElementById(
+        "featured-show-directions"
+    ) as HTMLAnchorElement;
+
+    const mapElement = document.getElementById(
+        "featured-show-map"
+    ) as HTMLIFrameElement;
+
+    function formatEventDate(eventDate: string): string {
+        const date = new Date(`${eventDate}T00:00:00`);
+
+        return date.toLocaleDateString("es-AR", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        });
+    }
+
+    function getSectionLabel(eventDate: string): string {
+        const eventDay = new Date(`${eventDate}T00:00:00`);
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        return eventDay >= today
+            ? "PRÓXIMO SHOW"
+            : "ÚLTIMA FECHA";
+    }
+
+    function showUnavailableMessage(message: string): void {
+        labelElement.textContent = "SHOWS";
+        titleElement.textContent = message;
+        descriptionElement.textContent = "";
+        venueElement.textContent = "";
+        dateElement.textContent = "";
+        locationElement.textContent = "";
+        directionsElement.hidden = true;
+        mapElement.hidden = true;
+    }
+
+    async function loadFeaturedShow(): Promise<void>  {
+        try {
+            const response = await fetch(`${API_URL}/events/featured`);
+
+            if (response.status === 404) {
+                showUnavailableMessage(
+                    "Todavía no hay fechas anunciadas."
+                );
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("No se pudo obtener el show.");
+            }
+
+            const show = await response.json();
+
+            labelElement.textContent = getSectionLabel(show.event_date);
+            titleElement.textContent = show.title;
+            descriptionElement.textContent = show.description;
+            venueElement.textContent = show.venue;
+            dateElement.textContent =
+                `Fecha: ${formatEventDate(show.event_date)} `
+                + `· Puertas ${show.doors_time}`;
+
+            locationElement.textContent = `${show.address} ↗`;
+            locationElement.href = show.maps_search_url;
+
+            directionsElement.href = show.directions_url;
+            directionsElement.hidden = false;
+
+            mapElement.src = show.map_embed_url;
+            mapElement.title = `Mapa de ${show.venue}`;
+            mapElement.hidden = false;
+        } catch (error) {
+            showUnavailableMessage(
+                "No se pudo cargar la información del show."
+            );
+        }
+    }
+
+    loadFeaturedShow();
+</script>

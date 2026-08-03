@@ -1,0 +1,291 @@
+<button
+    id="public-assistant-trigger"
+    type="button"
+    aria-label="Abrir asistente de NEO"
+    aria-controls="public-assistant-panel"
+    aria-expanded="false"
+    class="fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center border border-white/30 bg-brand-black/90 text-xl text-brand-white backdrop-blur-md transition-all duration-300 hover:border-brand-red hover:text-brand-red focus-visible:border-brand-red focus-visible:text-brand-red focus-visible:outline-none"
+>
+    <span aria-hidden="true">💬</span>
+</button>
+
+<section
+    id="public-assistant-panel"
+    class="fixed inset-0 z-50 hidden"
+    aria-hidden="true"
+>
+    <button
+        id="public-assistant-backdrop"
+        type="button"
+        aria-label="Cerrar asistente"
+        class="absolute inset-0 h-full w-full bg-black/75"
+    ></button>
+
+    <aside
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="public-assistant-title"
+        class="absolute bottom-6 right-6 flex h-[min(680px,calc(100vh-3rem))] w-[min(420px,calc(100vw-3rem))] flex-col border border-white/20 bg-brand-black text-brand-white shadow-2xl"
+    >
+        <header class="flex items-center justify-between border-b border-white/20 px-5 py-4">
+            <div>
+                <p class="font-display text-sm tracking-[0.25em] text-brand-red">
+                    NEO
+                </p>
+
+                <h2
+                    id="public-assistant-title"
+                    class="text-xl font-semibold"
+                >
+                    Asistente
+                </h2>
+            </div>
+
+            <button
+                id="public-assistant-close"
+                type="button"
+                aria-label="Cerrar el asistente"
+                class="border border-white/30 px-3 py-1 text-sm transition hover:border-brand-red hover:text-brand-red"
+            >
+                Cerrar
+            </button>
+        </header>
+
+        <div
+            id="public-assistant-messages"
+            class="flex-1 space-y-4 overflow-y-auto px-5 py-6"
+            aria-live="polite"
+        >
+            <article class="border border-white/15 bg-white/5 p-4">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+                    Lab Assistant
+                </p>
+
+                <p class="text-sm leading-6 text-white/80">
+                    Hola. Puedo ayudarte con informacion sobre NEO, sus shows y esta pagina.
+                </p>
+            </article>
+        </div>
+
+        <form
+            id="public-assistant-form"
+            class="border-t border-white/20 p-4"
+        >
+            <label
+                for="public-assistant-input"
+                class="sr-only"
+            >
+                Tu mensaje
+            </label>
+
+            <div class="flex gap-2">
+                <input
+                    id="public-assistant-input"
+                    type="text"
+                    placeholder="Escribi tu consulta"
+                    class="min-w-0 flex-1 border border-white/30 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-white/40 focus:border-brand-red"
+                    required
+                >
+
+                <button
+                    id="public-assistant-send"
+                    type="submit"
+                    class="border border-white px-4 py-2 text-sm font-semibold transition hover:border-brand-red hover:text-brand-red"
+                >
+                    Enviar
+                </button>
+            </div>
+
+            <p
+                id="public-assistant-status"
+                class="min-h-5 pt-2 text-sm text-white/60"
+                role="status"
+            ></p>
+        </form>
+    </aside>
+</section>
+
+<script>
+    const API_URL = "http://127.0.0.1:8000";
+
+    const trigger = document.getElementById(
+        "public-assistant-trigger"
+    ) as HTMLButtonElement | null;
+
+    const panel = document.getElementById(
+        "public-assistant-panel"
+    ) as HTMLElement | null;
+
+    const closeButton = document.getElementById(
+        "public-assistant-close"
+    ) as HTMLButtonElement | null;
+
+    const backdrop = document.getElementById(
+        "public-assistant-backdrop"
+    ) as HTMLButtonElement | null;
+
+    const form = document.getElementById(
+        "public-assistant-form"
+    ) as HTMLFormElement | null;
+
+    const input = document.getElementById(
+        "public-assistant-input"
+    ) as HTMLInputElement | null;
+
+    const sendButton = document.getElementById(
+        "public-assistant-send"
+    ) as HTMLButtonElement | null;
+
+    const messagesElement = document.getElementById(
+        "public-assistant-messages"
+    ) as HTMLElement | null;
+
+    const statusElement = document.getElementById(
+        "public-assistant-status"
+    ) as HTMLParagraphElement | null;
+
+    const conversationId = crypto.randomUUID();
+
+    function addMessage(
+        role: "user" | "assisant",
+        content: string,
+    ) {
+        if (!messagesElement) return;
+
+        const messageElement = document.createElement("article");
+
+        messageElement.className =
+            role === "user"
+                ? "ml-8 border border-brand-red/60 bg-brand-red/10 p-4"
+                : "mr-8 border border-white/15 bg-white/5 p-4"
+
+        const authorElement = document.createElement("p");
+
+        authorElement.className =
+            "mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-red";
+
+        authorElement.textContent =
+            role === "user" ? "Vos" : "Lab assistant";
+
+        const contentElement = document.createElement("p");
+
+        contentElement.className =
+            "text-sm leading-6 text-white/80";
+
+        contentElement.textContent = content;
+
+        messageElement.append(authorElement, contentElement);
+        messagesElement.appendChild(messageElement);
+
+        messagesElement.scrollTop = messagesElement.scrollHeight;
+    }
+
+    async function getErrorMessage(
+        response: Response,
+        fallbackMessage: string,
+    ): Promise<string> {
+        try {
+            const data = await response.json();
+
+            return typeof data.detail === "string"
+                ? data.detail
+                : fallbackMessage;
+        } catch {
+            return fallbackMessage;
+        }
+    }
+
+    function openAssistant() {
+        if (!trigger || !panel) return;
+
+        panel.classList.remove("hidden");
+        panel.setAttribute("aria-hidden", "false");
+        trigger.setAttribute("aria-expanded", "true");
+
+        input?.focus();
+    }
+
+    function closeAssistant() {
+        if (!trigger || !panel) return;
+
+        panel.classList.add("hidden");
+        panel.setAttribute("aria-hidden", "true");
+        trigger.setAttribute("aria-expanded", "false");
+        trigger.focus();
+    }
+
+    trigger?.addEventListener("click", openAssistant);
+    closeButton?.addEventListener("click", closeAssistant);
+    backdrop?.addEventListener("click", closeAssistant);
+
+    window.addEventListener("keydown", (event) => {
+        if (
+            event.key === "Escape"
+            && !panel?.classList.contains("hidden")
+        ) {
+            closeAssistant();
+        }
+    });
+
+    form?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        if (
+            !input
+            || !sendButton
+            || !statusElement
+        ) {
+            return;
+        }
+
+        const message = input.value.trim();
+
+        if (!message) {
+            statusElement.textContent =
+                "Escribi un mensaje antes de enviarlo.";
+
+            return;
+        }
+
+        sendButton.disabled = true;
+        statusElement.textContent = "Pensando...";
+
+        addMessage("user", message);
+        input.value = ""
+
+        try {
+            const response = await fetch(`${API_URL}/chat`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    conversation_id: conversationId,
+                    message,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    await getErrorMessage(
+                        response,
+                        "El asistente no pudo responder.",
+                    )
+                );
+            }
+
+            const data = await response.json();
+
+            addMessage("assisant", data.response);
+            statusElement.textContent = "";
+        } catch (error) {
+            statusElement.textContent =
+                error instanceof Error
+                    ? error.message
+                    : "No pude comunicarme con el asistente.";
+        } finally {
+            sendButton.disabled = false;
+            input.focus();
+        }
+    });
+</script>
