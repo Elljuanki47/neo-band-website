@@ -1,0 +1,268 @@
+<section
+    id="admin-event-panel"
+    class="fixed inset-0 z-[60] hidden"
+    aria-hidden="true"
+>
+    <button
+        id="admin-event-backdrop"
+        type="button"
+        aria-label="Cerrar administracion de fechas"
+        class="absolute inset-0 h-full w-full bg-black/75"
+    ></button>
+
+    <aside
+        role="dialog"
+        aria-model="true"
+        aria-labelledby="admin-0event-title"
+        class="absolute bottom-6 right-6 flex h-[min(680px,calc(100vh-3rem))] w-[min(420px,calc(100vw-3rem))] flex-col border border-white/20 bg-brand-black text-brand-white shadow-2xl"
+    >
+        <header class="flex items-center justify-between border-b border-white/20 px-5 py-4">
+            <div>
+                <p class="font-display text-sm tracking-[0.25em] text-brand-red">
+                    NEO
+                </p>
+
+                <h2
+                    id="admin-event-title"
+                    class="text-xl font-semibold"
+                >
+                    Administracion de fechas
+                </h2>
+            </div>
+
+            <button
+                id="admin-event-close"
+                type="button"
+                class="border border-white/30 px-3 py-1 text-sm transition hover:border-brand-red hover:text-brand-red"
+            >
+                Cerrar
+            </button>
+        </header>
+
+        <section
+            id="admin-event-messages"
+            class="flex-1 space-y-4 overflow-y-auto px-5 py-6"
+            aria-live="polite"
+        >
+            <article class="border border-white/15 bg-white/5 p-4">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-red">
+                    Asistente de eventos
+                </p>
+
+                <p class="text-sm leading-6 text-white/80">
+                    Decime "Tenemos una nueva fecha" para comenzar a cargar un evento.
+                </p>
+            </article>
+        </section>
+
+        <form
+            id="admin-event-form"
+            class="border-t border-white/20 p-4"
+        >
+            <label for="admin-event-input" class="sr-only">
+                Tu mensaje
+            </label>
+
+            <div class="flex gap-2">
+                <input
+                    id="admin-event-input"
+                    type="text"
+                    placeholder="Ejemplo: Tenemos una nueva fecha"
+                    required
+                    class="min-w-0 flex-1 border border-white/30 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-white/40 focus:border-brand-red"
+                >
+
+                <button
+                    id="admin-event-send"
+                    type="submit"
+                    class="border border-white px-4 py-2 text-sm font-semibold transition hover:border-brand-red hover:text-brand-red disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    Enviar
+                </button>
+            </div>
+
+            <p
+                id="admin-event-status"
+                class="min-h-5 pt-2 text-sm text-white/60"
+                role=status
+            ></p>
+        </form>
+    </aside>
+</section>
+
+<script>
+import type { lazy } from "astro:schema";
+
+    type AdminChatResponse = {
+        response: string;
+        draft_id: number | null;
+        draft_state: string | null;
+        missin_fields: string[];
+        ready_to_confirm: boolean;
+    };
+
+    const API_URL = "http://localhost:8000";
+
+    const panel = document.getElementById(
+        "admin-event-panel"
+    ) as HTMLElement | null;
+
+    const backdrop = document.getElementById(
+        "admin-event-backdrop"
+    ) as HTMLButtonElement | null;
+
+    const closeButton = document.getElementById(
+        "admin-event-close"
+    ) as HTMLButtonElement | null;
+
+    const form = document.getElementById(
+        "admin-event-form"
+    ) as HTMLFormElement | null;
+
+    const input = document.getElementById(
+        "admin-event-input"
+    ) as HTMLInputElement | null;
+
+    const sendButton = document.getElementById(
+        "admin-event-send"
+    ) as HTMLButtonElement | null;
+
+    const messagesElement = document.getElementById(
+        "admin-event-messages"
+    ) as HTMLElement | null;
+
+    const statusElement = document.getElementById(
+        "admin-event-status"
+    ) as HTMLParagraphElement | null;
+
+    let conversationId = crypto.randomUUID();
+
+    function openPanel() {
+        panel?.classList.remove("hidden");
+        panel?.setAttribute("aria-hidden", "false");
+        input?.focus();
+    }
+
+    function closePanel() {
+        panel?.classList.add("hidden");
+        panel?.setAttribute("aria-hidden", "true");
+    }
+
+    function addMessage(role: "user" | "assistant", content: string) {
+        if (!messagesElement) {
+            return;
+        }
+
+        const messageElement = document.createElement("article");
+
+        messageElement.className =
+            role === "user"
+                ? "ml-8 border border-brand-red bg-brand-red/10 p-4"
+                : "ml-8 border border-white/15 bg-white/5 p-4";
+
+        const authorElement = document.createElement("p");
+
+        authorElement.className =
+            "mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-brand-red";
+
+        authorElement.textContent =
+            role === "user" ? "Vos" : "Asistente de eventos";
+
+        const contentElement = document.createElement("p");
+
+        contentElement.className =
+            "whitespace-pre-wrap text-sm leading-6 text-white/80";
+
+        contentElement.textContent = content;
+
+        messageElement.append(authorElement, contentElement);
+        messagesElement.appendChild(messageElement);
+
+        messagesElement.scrollTop = messagesElement.scrollHeight;
+    }
+
+    async function getErrorMessage(response: Response) {
+        try {
+            const data = await response.json();
+
+            if (typeof data.detail === "string") {
+                return data.detail;
+            }
+        } catch {
+            //Si el backend no devolvio JSON, usamos el mensaje generico.
+        }
+
+        return "No se pudo procesar el mensaje.";
+    }
+
+    backdrop?.addEventListener("click", closePanel);
+    closeButton?.addEventListener("click", closePanel);
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            closePanel();
+        }
+    });
+
+    window.addEventListener("open-admin-events", openPanel);
+
+    form?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        if (
+            !input ||
+            !sendButton ||
+            !statusElement
+        ) {
+            return;
+        }
+
+        const message = input.value.trim();
+
+        if (!message) {
+            statusElement.textContent =
+                "Escribi un mensaje antes de enviarlo.";
+            return;
+        }
+
+        sendButton.disabled = true;
+        statusElement.textContent = "Procesando el mensaje...";
+
+        addMessage("user", message);
+        input.value = "";
+
+        try {
+            const response = await fetch(`${API_URL}/admin/chat`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    conversation_id: conversationId,
+                    message: message
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    await getErrorMessage(response)
+                );
+            }
+
+            const data =
+                (await response.json()) as AdminChatResponse;
+
+            addMessage("assistant", data.response);
+            statusElement.textContent = "";
+        } catch (error) {
+            statusElement.textContent =
+                error instanceof Error
+                    ? error.message
+                    : "No sse pudo procesar el mensaje";
+        } finally {
+            sendButton.disabled = false;
+            input.focus();
+        }
+    });
+</script>

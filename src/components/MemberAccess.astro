@@ -1,0 +1,387 @@
+<section>
+    <button
+        id="member-access-open"
+        type="button"
+        class="fixed bottom-6 left-6 z-40 border border-white/30 bg-brand-black px-4 py-3 text-sm font-semibold text-brand-white shadow-xl transition hover:border-brand-red hover:text-brand-red"
+    >
+        Acceso miembros
+    </button>
+
+    <section
+        id="member-access-panel"
+        class="fixed inset-0 z-50 hidden"
+        aria-hidden="true"
+    >
+        <button
+            id="member-access-backdrop"
+            type="button"
+            aria-label="Cerrar acceso de miembros"
+            class="absolute inset-0 h-full w-full bg-black/75"
+        ></button>
+
+        <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="member-access-title"
+            class="absolute left-1/2 top-1/2 w-[min(420px,calc(100vw-3rem))] -translate-x-1/2 -translate-y-1/2 border border-white/20 bg-brand-black p-6 text-brand-white shadow-2xl"
+        >
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="font-display text-sm tracking-[0.25em] text-brand-red">
+                        NEO
+                    </p>
+
+                    <h2
+                        id="member-access-title"
+                        class="mt-1 text-2xl font-semibold"
+                    >
+                        Acceso de miembros
+                    </h2>
+                </div>
+
+                <button
+                    id="member-access-close"
+                    type="button"
+                    class="border border-white/30 px-3 py-1 text-sm transition hover:border-brand-red hover:text-brand-red"
+                >
+                    Cerrar
+                </button>
+            </div>
+
+            <p class="mt-5 text-sm leading-6 text-white/70">
+                Ingresá con tu cuenta para administrar las fechas y la
+                información oficial de NEO.
+            </p>
+
+            <p
+                id="member-access-status"
+                class="mt-4 min-h-5 text-sm text-white/70"
+                role="status"
+            ></p>
+
+            <form id="member-login-form" class="mt-6 space-y-4">
+                <div>
+                    <label for="member-email" class="mb-2 block text-sm">
+                        Email
+                    </label>
+
+                    <input
+                        id="member-email"
+                        type="email"
+                        autocomplete="email"
+                        required
+                        class="w-full border border-white/30 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-white/40 focus:border-brand-red"
+                    >
+                </div>
+
+                <div>
+                    <label for="member-password" class="mb-2 block text-sm">
+                        Contraseña
+                    </label>
+
+                    <input
+                        id="member-password"
+                        type="password"
+                        autocomplete="current-password"
+                        required
+                        class="w-full border border-white/30 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-white/40 focus:border-brand-red"
+                    >
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full border border-white bg-white px-4 py-2 text-sm font-semibold text-brand-black transition hover:border-brand-red hover:bg-brand-red hover:text-brand-white"
+                >
+                    Ingresar
+                </button>
+            </form>
+
+            <section id="member-session" class="mt-6" hidden>
+                <div>
+                    <p class="text-sm text-white/70">
+                        Sesión activa
+                    </p>
+
+                    <p
+                        id="member-session-email"
+                        class="mt-1 break-all text-sm font-semibold text-brand-white"
+                    ></p>
+                </div>
+
+                <p
+                    id="member-session-description"
+                    class="mt-2 text-sm leading-6 text-white/70"
+                ></p>
+
+                <button
+                    id="member-admin-events"
+                    type="button"
+                    class="mt-5 w-full border border-brand-red bg-brand-red px-4 py-2 text-sm font-semibold text-brand-white transition hover:bg-transparent hover:text-brand-red"
+                    hidden
+                >
+                    Aministrar fechas
+                </button>
+
+                <button
+                    id="member-logout"
+                    type="button"
+                    class="mt-5 border border-white/30 px-4 py-2 text-sm font-semibold transition hover:border-brand-red hover:text-brand-red"
+                >
+                    Cerrar sesión
+                </button>
+            </section>
+        </div>
+    </section>
+</section>
+
+<script>
+    type CurrentUser = {
+        id: number;
+        email: string;
+        role: "admin" | "fan";
+        is_active: boolean;
+    };
+
+    const API_URL = "http://localhost:8000";
+
+    const openButton = document.getElementById(
+        "member-access-open"
+    ) as HTMLButtonElement | null;
+
+    const panel = document.getElementById("member-access-panel");
+
+    const closeButton = document.getElementById(
+        "member-access-close"
+    ) as HTMLButtonElement | null;
+
+    const backdrop = document.getElementById(
+        "member-access-backdrop"
+    ) as HTMLButtonElement | null;
+
+    const loginForm = document.getElementById(
+        "member-login-form"
+    ) as HTMLFormElement | null;
+
+    const emailInput = document.getElementById(
+        "member-email"
+    ) as HTMLInputElement | null;
+
+    const passwordInput = document.getElementById(
+        "member-password"
+    ) as HTMLInputElement | null;
+
+    const statusElement = document.getElementById(
+        "member-access-status"
+    ) as HTMLParagraphElement | null;
+
+    const sessionPanel = document.getElementById(
+        "member-session"
+    ) as HTMLElement | null;
+
+    const sessionEmail = document.getElementById(
+        "member-session-email"
+    ) as HTMLElement | null;
+
+    const sessionDescription = document.getElementById(
+        "member-session-description"
+    ) as HTMLParagraphElement | null;
+
+    const logoutButton = document.getElementById(
+        "member-logout"
+    ) as HTMLButtonElement | null;
+
+    const adminEventsButton = document.getElementById(
+        "member-admin-events"
+    ) as HTMLButtonElement | null;
+
+    function openPanel() {
+        panel?.classList.remove("hidden");
+        panel?.setAttribute("aria-hidden", "false");
+    }
+
+    function closePanel() {
+        panel?.classList.add("hidden");
+        panel?.setAttribute("aria-hidden", "true");
+    }
+
+    function showAuthenticatedUser(user: CurrentUser) {
+        if (
+            !openButton ||
+            !loginForm ||
+            !sessionPanel ||
+            !sessionEmail ||
+            !sessionDescription ||
+            !statusElement
+        ) {
+            return;
+        }
+
+        openButton.textContent =
+            user.role === "admin"
+                ? "Panel de miembros"
+                : "Mi cuenta";
+
+        loginForm.hidden = true;
+        sessionPanel.hidden = false;
+
+        if (adminEventsButton) {
+            adminEventsButton.hidden = user.role !== "admin";
+        }
+
+        sessionEmail.textContent = user.email;
+
+        sessionDescription.textContent =
+            user.role === "admin"
+                ? "Tu cuenta tiene permisos para administrar la información oficial de NEO."
+                : "Tu cuenta está activa. Podés seguir usando el asistente público.";
+
+        statusElement.textContent = "";
+    }
+
+    function showAnonymousUser(message = "") {
+        if (
+            !openButton ||
+            !loginForm ||
+            !sessionPanel ||
+            !statusElement
+        ) {
+            return;
+        }
+
+        openButton.textContent = "Acceso miembros";
+
+        loginForm.hidden = false;
+        sessionPanel.hidden = true;
+
+        if (adminEventsButton) {
+            adminEventsButton.hidden = true;
+        }
+
+        loginForm.reset();
+        statusElement.textContent = message;
+    }
+
+    async function getErrorMessage(response: Response) {
+        try {
+            const data = await response.json();
+
+            if (typeof data.detail === "string") {
+                return data.detail;
+            }
+        } catch {
+            // Si el backend no devolvió JSON, usamos el mensaje genérico.
+        }
+
+        return "No se pudo iniciar sesión.";
+    }
+
+    async function loadCurrentUser() {
+        try {
+            const response = await fetch(`${API_URL}/auth/me`, {
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const user = (await response.json()) as CurrentUser;
+
+            showAuthenticatedUser(user);
+        } catch {
+            // No mostramos error: simplemente no hay una sesión disponible.
+        }
+    }
+
+    openButton?.addEventListener("click", openPanel);
+    closeButton?.addEventListener("click", closePanel);
+    backdrop?.addEventListener("click", closePanel);
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            closePanel();
+        }
+    });
+
+    loginForm?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        if (!emailInput || !passwordInput || !statusElement) {
+            return;
+        }
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        statusElement.textContent = "Iniciando sesión...";
+
+        try {
+            const response = await fetch(`${API_URL}/auth/login`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    await getErrorMessage(response)
+                );
+            }
+
+            const user = (await response.json()) as CurrentUser;
+
+            passwordInput.value = "";
+
+            showAuthenticatedUser(user);
+        } catch (error) {
+            statusElement.textContent =
+                error instanceof Error
+                    ? error.message
+                    : "No se pudo iniciar sesión.";
+        }
+    });
+
+    adminEventsButton?.addEventListener("click", () => {
+        closePanel();
+
+        window.dispatchEvent(
+            new Event("open-admin-events")
+        );
+    });
+
+    logoutButton?.addEventListener("click", async () => {
+        if (!statusElement) {
+            return;
+        }
+
+        statusElement.textContent = "Cerrando sesión...";
+
+        try {
+            const response = await fetch(`${API_URL}/auth/logout`, {
+                method: "POST",
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    await getErrorMessage(response)
+                );
+            }
+
+            showAnonymousUser("Sesión cerrada correctamente.");
+        } catch (error) {
+            statusElement.textContent =
+                error instanceof Error
+                    ? error.message
+                    : "No se pudo cerrar sesión.";
+        }
+    });
+
+    loadCurrentUser();
+</script>
