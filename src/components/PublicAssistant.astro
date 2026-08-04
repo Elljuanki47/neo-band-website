@@ -106,6 +106,8 @@
 </section>
 
 <script>
+import { lazy } from "astro:schema";
+
     const API_URL = "http://localhost:8000";
 
     const trigger = document.getElementById(
@@ -146,8 +148,84 @@
 
     const conversationId = crypto.randomUUID();
 
+    function appendTextWithBold(
+        element: HTMLElement,
+        text: string,
+    ) {
+        const parts = text.split(/(\*\*[^*]+\*\*)/g);
+
+        for (const part of parts) {
+            const isBold =
+                part.startsWith("**")
+                && part.endsWith("**");
+
+            if (!isBold) {
+                element.appendChild(
+                    document.createTextNode(part)
+                );
+
+                continue;
+            }
+
+            const boldElement = document.createElement("strong");
+
+            boldElement.textContent = part.slice(2, -2);
+
+            element.appendChild(boldElement);
+        }
+    }
+
+    function appendContentWithLinks(
+        element: HTMLElement,
+        content: string,
+    ) {
+        const parts = content.split(
+            /(https?:\/\/[^\s]+)/g
+        );
+
+        for (const part of parts) {
+            const isUrl =
+            part.startsWith("http://")
+            || part.startsWith("https://");
+
+            if (!isUrl) {
+                appendTextWithBold(element, part);
+
+                continue;
+            }
+
+            const url = part.replace(/[.,;:!?]+$/, "");
+            const punctuation = part.slice(url.length);
+
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.target = "_blank"
+            link.rel = "noopener noreferrer";
+            link.className =
+                "text-brand-red underline underline-offset-4 transition hover:text-brand-white";
+
+            try {
+                const hostname = new URL(url).hostname;
+
+                link.textContent =
+                    `${hostname.replace("www.", "")} ↗`;
+            } catch {
+                link.textContent = "Abrir enlace ↗";
+            }
+
+            element.appendChild(link);
+
+            if (punctuation) {
+                element.appendChild(
+                    document.createTextNode(punctuation)
+                );
+            }
+        }
+    }
+
     function addMessage(
-        role: "user" | "assisant",
+        role: "user" | "assistant",
         content: string,
     ) {
         if (!messagesElement) return;
@@ -170,9 +248,9 @@
         const contentElement = document.createElement("p");
 
         contentElement.className =
-            "text-sm leading-6 text-white/80";
+            "whitespace-pre-wrap text-sm leading-6 text-white/80";
 
-        contentElement.textContent = content;
+        appendContentWithLinks(contentElement, content);
 
         messageElement.append(authorElement, contentElement);
         messagesElement.appendChild(messageElement);
@@ -276,7 +354,7 @@
 
             const data = await response.json();
 
-            addMessage("assisant", data.response);
+            addMessage("assistant", data.response);
             statusElement.textContent = "";
         } catch (error) {
             statusElement.textContent =
